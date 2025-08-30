@@ -1,0 +1,15 @@
+syntax = "proto3";
+package voter.voter;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "voter/x/voter/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "voter/x/voter/Params";
+  option (gogoproto.equal) = true;
+
+  
+}

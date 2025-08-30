@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package voter.voter;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "voter/voter/params.proto";
+import "voter/voter/vote.proto";
+import "voter/voter/poll.proto";
+
+option go_package = "voter/x/voter/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/voter/voter/params";
+  
+  }
+  
+  // Queries a list of ShowPoll items.
+  rpc ShowPoll (QueryShowPollRequest) returns (QueryShowPollResponse) {
+    option (google.api.http).get = "/voter/voter/show_poll/{pollId}";
+  
+  }
+  
+  // Queries a list of ShowPollVotes items.
+  rpc ShowPollVotes (QueryShowPollVotesRequest) returns (QueryShowPollVotesResponse) {
+    option (google.api.http).get = "/voter/voter/show_poll_votes/{pollId}";
+  
+  }
+  
+  // Queries a list of ShowAllPolls items.
+  rpc ShowAllPolls (QueryShowAllPollsRequest) returns (QueryShowAllPollsResponse) {
+    option (google.api.http).get = "/voter/voter/show_all_polls";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message QueryShowPollRequest {
+  uint64 pollId = 1;
+}
+
+message QueryShowPollResponse {
+  string creator = 1;
+  string id      = 2;
+  string title   = 3;
+  string options = 4;
+}
+
+
+/*
+message PageRequest {
+  // key is a value returned in PageResponse.next_key to begin
+  // querying the next page most efficiently. Only one of offset or key
+  // should be set.
+  bytes key = 1;
+
+  // offset is a numeric offset that can be used when key is unavailable.
+  // It is less efficient than using key. Only one of offset or key should
+  // be set.
+  uint64 offset = 2;
+
+  // limit is the total number of results to be returned in the result page.
+  // If left empty it will default to a value to be set by each app.
+  uint64 limit = 3;
+
+  // count_total is set to true  to indicate that the result set should include
+  // a count of the total number of items available for pagination in UIs.
+  // count_total is only respected when offset is used. It is ignored when key
+  // is set.
+  bool count_total = 4;
+
+  // reverse is set to true if results are to be returned in the descending order.
+  bool reverse = 5 [(cosmos_proto.field_added_in) = "cosmos-sdk 0.43"];
+}
+*/
+message QueryShowPollVotesRequest {
+  uint64 pollId = 1;
+  
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryShowPollVotesResponse {
+  repeated Vote votes = 1;
+  
+  // Pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryShowAllPollsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryShowAllPollsResponse {
+  repeated Poll polls =1;
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
